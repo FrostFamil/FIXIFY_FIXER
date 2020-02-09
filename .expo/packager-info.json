@@ -1,0 +1,10 @@
+{
+  "expoServerPort": null,
+  "expoServerNgrokUrl": "https://zy-wb2.fam.fixify-fixer.exp.direct",
+  "packagerNgrokUrl": "https://packager.zy-wb2.fam.fixify-fixer.exp.direct",
+  "ngrokPid": 7035,
+  "devToolsPort": 19002,
+  "packagerPort": null,
+  "packagerPid": null,
+  "webpackServerPort": 19006
+}
