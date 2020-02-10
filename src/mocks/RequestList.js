@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Dimensions, ImageBackground, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView, FlatList, Dimensions, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome, SimpleLineIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Modal from 'react-native-modal';
 import fixerGetRelatedRequests from "../requests/fixerGetRelatedRequests";
 import fixerSeeRequest from '../requests/fixerSeeRequest';
+import { getUserProfileRequest } from '../requests/profileRequest';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -12,7 +13,11 @@ class RequestList extends Component {
         activeModal: null,
         relatedRequests: [],
         requestIndex: '',
-        problem: ''
+        problem: '',   
+        creator: '',
+        customerFirstName: '',
+        customerLastName: '',
+        customerEmail: ''
       }
 
 
@@ -64,6 +69,18 @@ class RequestList extends Component {
                     <Text style={{ fontSize: 16 * 1.15 }}> 20km</Text>
                 </View>
                 </View>
+                <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#A5A5A5', paddingBottom: 5 }}>Information about Customer</Text>
+                </View>
+                <View style={styles.profile}>
+                  <View style={styles.imgView}>
+                    <Image style={styles.img} source={require('../../assets/Icons/photo.png')} />
+                  </View>
+                  <View style={styles.profileText}>
+								    <Text style={styles.name}>{this.state.customerFirstName} {this.state.customerLastName}</Text>
+                    <Text style={styles.email}>{this.state.customerEmail}</Text>
+                  </View>
+                </View>
             </View>
             </Modal>
         );
@@ -76,7 +93,13 @@ class RequestList extends Component {
         global.requestIndex = requestIndex;
 
         fixerSeeRequest(requestIndex).then(res => {
-          this.setState({problem: res.request.problem});
+          this.setState({problem: res.request.problem, creator: res.request.creator}, () => {
+            const userId = this.state.creator;
+
+            getUserProfileRequest(userId).then(res => {
+              this.setState({ customerFirstName: res.firstName, customerLastName: res.lastName, customerEmail: res.email});
+            })
+          });
           global.problem = res.request.problem;
           global.userLocLat = res.request.latitudeFrom;
           global.userLocLng = res.request.longitudeFrom;
@@ -187,7 +210,7 @@ const styles = {
   },
   modal: {
     flexDirection: 'column',
-    height: height * 0.75,
+    height: height * 0.40,
     padding: 12 * 2,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 12,
@@ -201,7 +224,41 @@ const styles = {
     borderBottomWidth: 1,
     borderTopColor: '#C1BEC0',
     borderBottomColor: '#C1BEC0',
-  }
+  },
+  
+  profile: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		borderBottomWidth: 1,
+		borderBottomColor: '#777777',
+  },
+  imgView: {
+		flex: 1,
+		paddingLeft: 20,
+		paddingRight: 20,
+	},
+	img: {
+		height: 70,
+		width: 70,
+		borderRadius: 20,
+  },
+  profileText: {
+		flex: 3,
+		flexDirection: 'column',
+		justifyContent: 'center',
+  },
+  name: {
+		fontSize: 20,
+		paddingBottom: 1,
+		color: 'black',
+		textAlign: 'left',
+  },
+  email: {
+    fontSize: 13,
+		color: 'black',
+		textAlign: 'left',
+  },
 };
 
 

@@ -5,7 +5,7 @@ import { getLocation } from '../services/location-service';
 import Geocoder from 'react-native-geocoding';
 import {MaterialCommunityIcons, Entypo} from '@expo/vector-icons';
 import RequestList from '../mocks/RequestList';
-import profileRequest from '../requests/profileRequest';
+import {profileRequest} from '../requests/profileRequest';
 import {StackActions, NavigationActions} from 'react-navigation';
 import { getFixersPreviousLoc, addFixersLoc, updateFixersLoc } from "../requests/updateFixersLocation";
 import * as Location from 'expo-location';

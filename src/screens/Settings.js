@@ -3,7 +3,7 @@ import {View,Text, Image} from "react-native";
 import {Header, Left, Icon, Body, Title, Right} from 'native-base';
 import { CardSection, SettingInput } from '../components';
 import {MaterialIcons} from '@expo/vector-icons';
-import profileRequest from '../requests/profileRequest';
+import {profileRequest} from '../requests/profileRequest';
 
 export default class Settings extends Component {
 

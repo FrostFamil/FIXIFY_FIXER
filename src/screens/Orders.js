@@ -24,6 +24,10 @@ export default class Orders extends Component {
     oldOrders: []
   }
 
+  componentDidMount() {
+    this.refreshPressed();
+  }
+
   openMapDetails = () => {
     this.props.navigation.navigate('orderMap');
   }
