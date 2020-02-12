@@ -1,0 +1,23 @@
+import React from 'react';
+import {AsycnStorage } from 'react-native';
+import axios from 'axios';
+
+const pushNotification = (token, fName, lName, serviceType) => {
+    return axios({
+    method: 'post',
+    url: 'http://192.168.0.87:8080/notification/saveFixersToken',
+    data: {
+        token: token,
+        fName: fName,
+        lName: lName,
+        serviceType: serviceType
+    }
+    })
+    .then(response => {
+        return response.data;
+    }, error => {
+        console.log(error);
+    });
+}
+
+export {pushNotification};

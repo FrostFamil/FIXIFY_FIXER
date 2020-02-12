@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import {View,Text, Alert, Dimensions} from "react-native";
+import {View,Text, Alert, Dimensions, PushNotificationIOS} from "react-native";
 import {Header, Left, Icon, Body, Title, Right} from 'native-base';
+import * as Permissions from 'expo-permissions';
+import {Notifications} from 'expo'
 import { getLocation } from '../services/location-service';
 import Geocoder from 'react-native-geocoding';
 import {MaterialCommunityIcons, Entypo} from '@expo/vector-icons';
@@ -10,6 +12,7 @@ import {StackActions, NavigationActions} from 'react-navigation';
 import { getFixersPreviousLoc, addFixersLoc, updateFixersLoc } from "../requests/updateFixersLocation";
 import * as Location from 'expo-location';
 import fixerAcceptRequest from "../requests/fixerAcceptRequest";
+import {pushNotification} from '../requests/pushNotification';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -39,7 +42,7 @@ export default class Home extends Component {
     postId: ''
   }
 
-  componentDidMount() {
+  componentDidMount = async() => {
     Geocoder.init('AIzaSyAjL_doMA-BBX1S-Lx_BJXrPAjQCFh3UrM');
     this.getInitialState();
     
@@ -50,6 +53,22 @@ export default class Home extends Component {
       global.serviceType = res.status; 
     });
 
+    let {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+  
+    if ( status !== 'granted' ){
+      return;
+    }
+    let token = await Notifications.getExpoPushTokenAsync();
+    
+    pushNotification(token, global.fName, global.lName, global.serviceType).then(res => {
+      console.log(res);    
+    })
+    
+
+  }
+
+  getNotificationToken = async() => {
+      
   }
 
   
