@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {View,Text, Alert, Dimensions, PushNotificationIOS} from "react-native";
+import {View,Text, Alert, Dimensions, AsyncStorage} from "react-native";
 import {Header, Left, Icon, Body, Title, Right} from 'native-base';
 import * as Permissions from 'expo-permissions';
 import {Notifications} from 'expo'
@@ -13,6 +13,8 @@ import { getFixersPreviousLoc, addFixersLoc, updateFixersLoc } from "../requests
 import * as Location from 'expo-location';
 import fixerAcceptRequest from "../requests/fixerAcceptRequest";
 import {pushNotification} from '../requests/pushNotification';
+import getPushTokens from "../requests/getPushTokens";
+import sendPushNotification from "../requests/sendPushNotification";
 
 const { width, height } = Dimensions.get('screen');
 
@@ -53,24 +55,27 @@ export default class Home extends Component {
       global.serviceType = res.status; 
     });
 
+    let previousToken = await AsyncStorage.getItem('fixerPushToken');
+
+    console.log(previousToken);
+
+    if (previousToken){
+      return;
+    }else{
     let {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-  
+
     if ( status !== 'granted' ){
       return;
     }
+
     let token = await Notifications.getExpoPushTokenAsync();
+    AsyncStorage.setItem('fixerPushToken', token);
     
     pushNotification(token, global.fName, global.lName, global.serviceType).then(res => {
       console.log(res);    
     })
-    
-
+    }
   }
-
-  getNotificationToken = async() => {
-      
-  }
-
   
 
   getInitialState() {
@@ -148,8 +153,19 @@ export default class Home extends Component {
 
   acceptPressed = () => {
     fixerAcceptRequest(global.requestIndex, global.fixerId).then(res => {
+      
+      const userId = res.request.creator;
+      getPushTokens(userId).then(res => {
+        var to = res.tokens[0].token;
+        const title = "Request Accepted";
+        const body = "Your Request Accepted";
+
+        sendPushNotification(to, title, body).then(res => {
+          console.log(res);       
+        })
+      })
+
       this.props.navigation.navigate('successOrder');
-      console.log(res);
       
     })
   }
