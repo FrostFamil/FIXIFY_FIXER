@@ -16,7 +16,9 @@ class OrderList extends Component {
     creator: '',
     customerFirstName: '',
     customerLastName: '',
-    customerEmail: ''
+    customerEmail: '',
+    schedule: '',
+    payment: ''
   }
 
 
@@ -57,7 +59,7 @@ class OrderList extends Component {
             </View>
             <View style={[styles.parkingIcon, {justifyContent: 'flex-start'} ]}>
                 <Ionicons name='ios-pin' size={16 * 1.1} color='#7D818A' />
-                <Text style={{ fontSize: 16 * 1.15 }}> 20km</Text>
+                <Text style={{ fontSize: 16 * 1.15 }}>Not Live</Text>
             </View>
             </View>
             <View style={{ alignItems: 'center' }}>
@@ -72,6 +74,18 @@ class OrderList extends Component {
                 <Text style={styles.email}>{this.state.customerEmail}</Text>
 							</View>
 						</View>
+
+            <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#A5A5A5', paddingBottom: 5 }}>Information about Request</Text>
+            </View>
+            <View style={{flexDirection: "row", bottom: 5}}>
+               <Text style={{fontSize: 15, color: 'red'}}>Scheduled for: </Text>
+               <Text>{this.state.schedule}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', bottom: 5}}> 
+               <Text style={{ fontSize: 15, color: 'red'}}>Payment method: </Text>
+               <Text>{this.state.payment}</Text>
+          </View>
         </View>
         </Modal>
     );
@@ -83,7 +97,7 @@ class OrderList extends Component {
         const {requestIndex} = this.state;
 
         fixerSeeRequest(requestIndex).then(res => {
-          this.setState({problem: res.request.problem, creator: res.request.creator}, () => {
+          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType}, () => {
             const userId = this.state.creator;
 
             getUserProfileRequest(userId).then(res => {
@@ -123,12 +137,12 @@ class OrderList extends Component {
                       <View style={{ flex: 1, flexDirection: 'row', }}>
                           <View style={styles.serviceInfo}>
                               <MaterialCommunityIcons name="cash" color="black" size={23} />
-                              <Text style={{ marginLeft: 4, color: '#FFBA5A' }}>100</Text>
+                              <Text style={{ marginLeft: 4, color: '#FFBA5A' }}>{item.paymentType}</Text>
                           </View>
                           <View style={styles.serviceInfo}>
                           <FontAwesome name="location-arrow" color="#FF7657" size={12} />
                           <Text style={{ marginLeft: 4, color: '#FF7657' }}>
-                              20 km
+                              Not Live
                           </Text>
                           </View>
                       </View>

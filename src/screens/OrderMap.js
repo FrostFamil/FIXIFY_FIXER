@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, Dimensions, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { Text, StyleSheet, View, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Image } from 'react-native'
 import MapView, {Marker} from 'react-native-maps';
 import Modal from 'react-native-modal';
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -29,7 +29,7 @@ class OrderMap extends Component {
           <View style={styles.hours}>
             <Text style={styles.hoursTitle}>{global.serviceType}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: '#7D818A' }}>16:00</Text>
+              <Text style={{ color: '#7D818A' }}>{global.schedule}</Text>
             </View>
           </View>
           <View style={styles.parkingInfoContainer}>
@@ -97,15 +97,35 @@ class OrderMap extends Component {
             </View>
             <View style={[styles.parkingIcon, {justifyContent: 'flex-start'} ]}>
               <Ionicons name='ios-pin' size={16 * 1.1} color='#7D818A' />
-              <Text style={{ fontSize: 16 * 1.15 }}> 20km</Text>
+              <Text style={{ fontSize: 16 * 1.15 }}>Live</Text>
             </View>
           </View>
-          <View style={styles.modalHours}>
-            <Text style={{ textAlign: 'center', fontWeight: '500' }}>Current time</Text>
-            <View style={styles.modalHoursDropdown}>
-              <Text style={{ color: '#7D818A' }}>hrs</Text>
+
+          <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#A5A5A5', paddingBottom: 5 }}>Information about Customer</Text>
             </View>
+            <View style={styles.profile}>
+							<View style={styles.imgView}>
+								<Image style={styles.img} source={require('../../assets/Icons/photo.png')} />
+							</View>
+							<View style={styles.profileText}>
+								<Text style={styles.name}>{global.userFirstName} {global.userLastName}</Text>
+                <Text style={styles.email}>{global.userEmail}</Text>
+							</View>
+						</View>
+
+            <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#A5A5A5', paddingBottom: 5 }}>Information about Request</Text>
+            </View>
+            <View style={{flexDirection: "row", bottom: 5}}>
+               <Text style={{fontSize: 15, color: 'red'}}>Scheduled for: </Text>
+               <Text>{global.schedule}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', bottom: 5}}> 
+               <Text style={{ fontSize: 15, color: 'red'}}>Payment method: </Text>
+               <Text>{global.payment}</Text>
           </View>
+
           <View>
             <TouchableOpacity style={styles.payBtn} onPress={() => this.goBack()}>
               <Text style={styles.payText}>
@@ -234,7 +254,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     flexDirection: 'column',
-    height: height * 0.75,
+    height: height * 0.45,
     padding: 12 * 2,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 12,
@@ -285,5 +305,38 @@ const styles = StyleSheet.create({
     height: 12,
     borderRadius: 12,
     backgroundColor: '#3353FB'
+  },
+  profile: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		borderBottomWidth: 1,
+		borderBottomColor: '#777777',
+  },
+  imgView: {
+		flex: 1,
+		paddingLeft: 20,
+		paddingRight: 20,
+	},
+	img: {
+		height: 70,
+		width: 70,
+		borderRadius: 20,
+  },
+  profileText: {
+		flex: 3,
+		flexDirection: 'column',
+		justifyContent: 'center',
+  },
+  name: {
+		fontSize: 20,
+		paddingBottom: 1,
+		color: 'black',
+		textAlign: 'left',
+  },
+  email: {
+    fontSize: 13,
+		color: 'black',
+		textAlign: 'left',
   },
 })
