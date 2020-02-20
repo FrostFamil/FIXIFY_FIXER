@@ -122,8 +122,12 @@ class OrderMap extends Component {
                <Text>{global.schedule}</Text>
             </View>
             <View style={{ flexDirection: 'row', bottom: 5}}> 
-               <Text style={{ fontSize: 15, color: 'red'}}>Payment method: </Text>
-               <Text>{global.payment}</Text>
+              <Text style={{ fontSize: 15, color: 'red'}}>Payment method: </Text>
+              <Text>{global.payment}</Text>
+            </View>
+            <View style={{ flexDirection: 'row', bottom: 5}}> 
+               <Text style={{ fontSize: 15, color: 'red'}}>Address: </Text>
+               <Text>{global.address}</Text>
           </View>
 
           <View>

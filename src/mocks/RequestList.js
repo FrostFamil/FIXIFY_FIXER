@@ -19,7 +19,8 @@ class RequestList extends Component {
         customerLastName: '',
         customerEmail: '',
         schedule: '',
-        payment: ''
+        payment: '',
+        address: ''
       }
 
 
@@ -94,6 +95,10 @@ class RequestList extends Component {
                 <View style={{ flexDirection: 'row', bottom: 5}}> 
                   <Text style={{ fontSize: 15, color: 'red'}}>Payment method: </Text>
                   <Text>{this.state.payment}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', bottom: 5}}> 
+                  <Text style={{ fontSize: 15, color: 'red'}}>Address: </Text>
+                  <Text>{this.state.address}</Text>
               </View>
             </View>
             </Modal>
@@ -107,7 +112,7 @@ class RequestList extends Component {
         global.requestIndex = requestIndex;
 
         fixerSeeRequest(requestIndex).then(res => {
-          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType}, () => {
+          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType, address: res.request.address}, () => {
             const userId = this.state.creator;
 
             getUserProfileRequest(userId).then(res => {
@@ -122,6 +127,7 @@ class RequestList extends Component {
           global.userLocLng = res.request.longitudeFrom;
           global.schedule = res.request.scheduled;
           global.payment = res.request.paymentType;
+          global.address = res.request.address;
         });
       });
     }
