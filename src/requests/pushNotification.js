@@ -2,7 +2,7 @@ import React from 'react';
 import {AsycnStorage } from 'react-native';
 import axios from 'axios';
 
-const pushNotification = (token, fName, lName, serviceType) => {
+const pushNotification = (token, fName, lName, fixerId, serviceType) => {
     return axios({
     method: 'post',
     url: 'http://192.168.0.87:8080/notification/saveFixersToken',
@@ -10,6 +10,7 @@ const pushNotification = (token, fName, lName, serviceType) => {
         token: token,
         fName: fName,
         lName: lName,
+        fixerId: fixerId,
         serviceType: serviceType
     }
     })

@@ -71,7 +71,7 @@ export default class Home extends Component {
     let token = await Notifications.getExpoPushTokenAsync();
     AsyncStorage.setItem('fixerPushToken', token);
     
-    pushNotification(token, global.fName, global.lName, global.serviceType).then(res => {
+    pushNotification(token, global.fName, global.lName, global.fixerId, global.serviceType).then(res => {
       console.log(res);    
     })
     }
@@ -131,6 +131,7 @@ export default class Home extends Component {
         
       })
     });
+    global.fixerLocation = this.state.userStartLocation;
   }
 
   openMapInfo = () => {

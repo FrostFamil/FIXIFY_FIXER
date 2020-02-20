@@ -19,7 +19,8 @@ class OrderList extends Component {
     customerEmail: '',
     schedule: '',
     payment: '',
-    address: ''
+    address: '',
+    price: ''
   }
 
 
@@ -52,7 +53,7 @@ class OrderList extends Component {
             <View style={styles.modalInfo}>
             <View style={[styles.parkingIcon, {justifyContent: 'flex-start'} ]}>
                 <Ionicons name='ios-pricetag' size={16 * 1.1} color='#7D818A' />
-                <Text style={{ fontSize: 16 * 1.15 }}> $15</Text>
+                <Text style={{ fontSize: 16 * 1.15 }}> ${this.state.price}</Text>
             </View>
             <View style={[styles.parkingIcon, {justifyContent: 'flex-start'} ]}>
                 <Ionicons name='ios-star' size={16 * 1.1} color='#7D818A' />
@@ -102,7 +103,7 @@ class OrderList extends Component {
         const {requestIndex} = this.state;
 
         fixerSeeRequest(requestIndex).then(res => {
-          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType, address: res.request.address}, () => {
+          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType, address: res.request.address, price: res.request.price}, () => {
             const userId = this.state.creator;
 
             getUserProfileRequest(userId).then(res => {

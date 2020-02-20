@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList, Dimensions, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome, SimpleLineIcons, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Input } from '../registerComponents';
 import Modal from 'react-native-modal';
+import * as geolib from 'geolib';
 import fixerGetRelatedRequests from "../requests/fixerGetRelatedRequests";
 import fixerSeeRequest from '../requests/fixerSeeRequest';
 import { getUserProfileRequest } from '../requests/profileRequest';
+import fixerSetPrice from '../requests/fixerSetPrice';
+import getPushTokens from "../requests/getPushTokens";
+import sendPushNotification from "../requests/sendPushNotification";
+import fixerGetPendingRequests from '../requests/fixerGetPendingRequest';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -12,6 +18,7 @@ class RequestList extends Component {
     state = {
         activeModal: null,
         relatedRequests: [],
+        pendingRequests: [],
         requestIndex: '',
         problem: '',   
         creator: '',
@@ -20,7 +27,9 @@ class RequestList extends Component {
         customerEmail: '',
         schedule: '',
         payment: '',
-        address: ''
+        address: '',
+        price: '',
+        purposedPrice: ''
       }
 
 
@@ -30,6 +39,33 @@ class RequestList extends Component {
         this.setState({ relatedRequests: res.requests}); 
       });
       
+      const acceptor = global.fixerId;
+
+      fixerGetPendingRequests(acceptor).then(res => {
+        this.setState({ pendingRequests: res.requests});  
+      })
+    }
+
+    purposePrice = () => {
+      const {requestIndex, purposedPrice} = this.state;
+      const price = purposedPrice;
+
+      fixerSetPrice(requestIndex, price, global.fixerId).then(res => {
+        console.log(res);
+
+        this.setState({ purposedPrice: '' });
+        const userId = this.state.creator;
+        getPushTokens(userId).then(res => {
+          var to = res.tokens[0].token;
+          const title = "Price Setted";
+          const body = "Price Setted For Your Request";
+
+          sendPushNotification(to, title, body).then(res => {
+            console.log(res);       
+          })
+        })
+        
+      })
     }
 
     renderModal() {
@@ -61,7 +97,7 @@ class RequestList extends Component {
                 <View style={styles.modalInfo}>
                 <View style={[styles.parkingIcon, {justifyContent: 'flex-start'} ]}>
                     <Ionicons name='ios-pricetag' size={16 * 1.1} color='#7D818A' />
-                    <Text style={{ fontSize: 16 * 1.15 }}> $15</Text>
+                    <Text style={{ fontSize: 16 * 1.15 }}> ${this.state.price}</Text>
                 </View>
                 <View style={[styles.parkingIcon, {justifyContent: 'flex-start'} ]}>
                     <Ionicons name='ios-star' size={16 * 1.1} color='#7D818A' />
@@ -100,20 +136,45 @@ class RequestList extends Component {
                   <Text style={{ fontSize: 15, color: 'red'}}>Address: </Text>
                   <Text>{this.state.address}</Text>
               </View>
+              <View style={{ flexDirection: 'row', bottom: 5}}> 
+                  <Text style={{ fontSize: 15, color: 'red'}}>Calculated Price for Distance: </Text>
+                  <Text>{this.state.roadPrice}$</Text>
+              </View>
+
+              <View>
+                <Input
+                  full
+                  keyboardType='phone-pad'
+                  label="Mobile number"
+                  style={{ marginBottom: 5, color: 'black' }}
+                  value={this.state.purposedPrice}
+                  onChangeText={(text) => this.setState({ purposedPrice:text })}
+                />
+                <TouchableOpacity style={styles.payBtn} onPress={() => this.purposePrice()}>
+                  <Text style={styles.payText}>
+                    Purpose Price
+                  </Text>
+                  <FontAwesome name='angle-right' size={16 * 1.75} color='#FFFFFF' />
+                </TouchableOpacity>
+              </View>
             </View>
             </Modal>
         );
         }
     
     openDetails = (requestIndex) => {
+
       this.setState({ requestIndex: requestIndex, activeModal: true }, () => {
 
         const {requestIndex} = this.state;
         global.requestIndex = requestIndex;
 
         fixerSeeRequest(requestIndex).then(res => {
-          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType, address: res.request.address}, () => {
+          this.setState({problem: res.request.problem, creator: res.request.creator, schedule: res.request.scheduled, payment: res.request.paymentType, address: res.request.address, price: res.request.price}, () => {
             const userId = this.state.creator;
+
+            const roadPrice = (geolib.getDistance(global.fixerLocation, { latitude: parseFloat(res.request.latitudeFrom), longitude: parseFloat(res.request.longitudeFrom)}, 1000)/1000 * 10 * 1.4 / 2).toString();
+            this.setState({ roadPrice: roadPrice });
 
             getUserProfileRequest(userId).then(res => {
               this.setState({ customerFirstName: res.firstName, customerLastName: res.lastName, customerEmail: res.email});
@@ -128,6 +189,7 @@ class RequestList extends Component {
           global.schedule = res.request.scheduled;
           global.payment = res.request.paymentType;
           global.address = res.request.address;
+          global.price = res.request.price;
         });
       });
     }
@@ -135,11 +197,65 @@ class RequestList extends Component {
     render() {
       return (
         <ScrollView>
+            <View style={{ alignItems: 'center' }}>
+              <Text style={{ fontSize: 15, color: '#A5A5A5', paddingBottom: 5 }}>New Requests</Text>
+            </View>
             {
             this.state.relatedRequests ?
             <FlatList
               id={this.props.orderIndex}
               data={this.state.relatedRequests}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({item} ) => (
+                <View style={styles.services}>
+                <ImageBackground
+                    style={styles.serviceImage}
+                    imageStyle={styles.serviceImage}
+                    source={require('../../assets/Icons/history.png')}
+                />
+                <View style={styles.serviceDetails}>
+                <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold' }}>
+                      {item.serviceType}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: '#A5A5A5', paddingTop: 5 }}>
+                      {item.status}
+                    </Text>
+                </View>
+                <View style={{ flex: 1, flexDirection: 'row', }}>
+                    <View style={styles.serviceInfo}>
+                        <MaterialCommunityIcons name="cash" color="black" size={23} />
+                        <Text style={{ marginLeft: 4, color: '#FFBA5A' }}>{item.paymentType}</Text>
+                    </View>
+                    <View style={styles.serviceInfo}>
+                    <FontAwesome name="location-arrow" color="#FF7657" size={12} />
+                    <Text style={{ marginLeft: 4, color: '#FF7657' }}>
+                        Live
+                    </Text>
+                    </View>
+                </View>
+                </View>
+                <View style={{ flex: 0.3, justifyContent: 'center' }}>
+                <TouchableOpacity onPress={(this.props.mapInfo)}>
+                 <SimpleLineIcons name="check" color="#A5A5A5" size={24} />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{top: 10}} onPress={() => this.openDetails(item._id)}>
+                 <SimpleLineIcons name="info" color="#A5A5A5" size={24} />
+                </TouchableOpacity>
+                </View>
+            </View>)}
+            />:null
+          }
+
+          <View style={{ alignItems: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#A5A5A5', paddingBottom: 5 }}>Pending Requests</Text>
+          </View>
+          {
+            this.state.pendingRequests ?
+            <FlatList
+              id={this.props.orderIndex}
+              data={this.state.pendingRequests}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({item} ) => (
                 <View style={styles.services}>
@@ -235,7 +351,7 @@ const styles = {
   },
   modal: {
     flexDirection: 'column',
-    height: height * 0.40,
+    height: height * 0.60,
     padding: 12 * 2,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 12,
@@ -283,6 +399,14 @@ const styles = {
     fontSize: 13,
 		color: 'black',
 		textAlign: 'left',
+  },
+  payBtn: {
+    borderRadius: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12 * 1.5,
+    backgroundColor: '#D83C54',
   },
 };
 
