@@ -4,7 +4,6 @@ import MapView, {Marker} from 'react-native-maps';
 import Modal from 'react-native-modal';
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import MapViewDirections from 'react-native-maps-directions';
-import {fixerFinishRequest} from '../requests/fixerFinishRequest';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -15,10 +14,8 @@ class OrderMap extends Component {
   }
 
   goBack = () => {
-    fixerFinishRequest(global.requestIndex).then(res => {
-      this.props.navigation.navigate("home");
-      this.setState({ activeModal: null });
-    })
+    this.setState({activeModal: null});
+    this.props.navigation.navigate('home');
   }
 
   renderParking = () => {
