@@ -5,7 +5,7 @@ import axios from 'axios';
 const signupRequest = (email, password, firstName, lastName,status, phone) => {
     return axios({
     method: 'put',
-    url: 'http://192.168.0.87:8080/auth/fixerSignup',
+    url: 'http://192.168.0.88:8080/auth/fixerSignup',
     data: {
         email: email,
         password: password,
