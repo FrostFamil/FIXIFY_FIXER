@@ -5,7 +5,7 @@ import axios from 'axios';
 const fixerSetPrice = (requestIndex, price, fixerId) => {
     return axios({
     method: 'post',
-    url: 'http://192.168.0.88:8080/requests/fixerSetPriceForRequest',
+    url: 'http://192.168.0.87:8080/requests/fixerSetPriceForRequest',
     data: {
         requestIndex: requestIndex,
         price: price,

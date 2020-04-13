@@ -9,7 +9,6 @@ import {MaterialCommunityIcons, Entypo} from '@expo/vector-icons';
 import RequestList from '../mocks/RequestList';
 import {profileRequest} from '../requests/profileRequest';
 import {StackActions, NavigationActions} from 'react-navigation';
-import { getFixersPreviousLoc, addFixersLoc, updateFixersLoc } from "../requests/updateFixersLocation";
 import * as Location from 'expo-location';
 import fixerAcceptRequest from "../requests/fixerAcceptRequest";
 import {pushNotification} from '../requests/pushNotification';
@@ -95,41 +94,6 @@ export default class Home extends Component {
         latitudeDelta: 0.003,
         longitudeDelta: 0.003,
       }
-    });
-
-    const latitude = this.state.userStartLocation.latitude;
-    const longitude = this.state.userStartLocation.longitude;
-
-    getFixersPreviousLoc(global.fixerId).then(res => {
-      if(res.postId){
-        this.setState({ postId: res.postId._id }, () => {
-          const {postId} = this.state;
-          this.updateUsersLocationDynamically(postId);
-        });
-      }else{
-        addFixersLoc(latitude, longitude, global.fixerId).then(res => {
-          this.setState({postId: res.postId}, () => {
-            const {postId} = this.state;
-            this.updateUsersLocationDynamically(postId);
-          })
-        })
-      }
-    })
-
-  }
-
-  updateUsersLocationDynamically = (postId) => {
-
-    Location.watchPositionAsync(LOCATION_SETTINGS, location => {
-      this.setState({ userStartLocation: location.coords}, () => {
-        const latitude = this.state.userStartLocation.latitude;
-        const longitude = this.state.userStartLocation.longitude;
-        
-        updateFixersLoc(postId, global.fixerId, latitude, longitude).then(res => {
-          console.log(res);  
-        });
-        
-      })
     });
     global.fixerLocation = this.state.userStartLocation;
   }

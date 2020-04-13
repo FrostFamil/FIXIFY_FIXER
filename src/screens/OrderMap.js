@@ -1,21 +1,92 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, Dimensions, TouchableOpacity, TouchableWithoutFeedback, Image } from 'react-native'
 import MapView, {Marker} from 'react-native-maps';
+import { getLocation } from '../services/location-service';
+import Geocoder from 'react-native-geocoding';
 import Modal from 'react-native-modal';
+import * as Location from 'expo-location';
 import { FontAwesome, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { getFixersPreviousLoc, addFixersLoc, updateFixersLoc } from "../requests/updateFixersLocation";
 import MapViewDirections from 'react-native-maps-directions';
 
 const { height, width } = Dimensions.get('screen');
+const LOCATION_SETTINGS = {
+  accuracy: Location.Accuracy.Balanced,
+  timeInterval: 10000,
+  distanceInterval: 0,
+};
 
 class OrderMap extends Component {
   state = {
     activeModal: null,
-    date: new Date()
+    date: new Date(),
+    fixerLocation: global.fixerLocation,
+    postId: ''
+  }
+
+  componentDidMount() {
+    Geocoder.init('AIzaSyAjL_doMA-BBX1S-Lx_BJXrPAjQCFh3UrM');
+    this.getInitialState();
   }
 
   goBack = () => {
     this.setState({activeModal: null});
     this.props.navigation.navigate('home');
+  }
+
+  getInitialState() {
+    getLocation().then(data => {
+      this.updateState({
+        latitude: data.latitude,
+        longitude: data.longitude,
+      });
+    });
+  }
+
+  updateState(location) {
+    this.setState({
+      fixerLocation: {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.003,
+        longitudeDelta: 0.003,
+      }
+    });
+
+    const latitude = this.state.fixerLocation.latitude;
+    const longitude = this.state.fixerLocation.longitude;
+
+    getFixersPreviousLoc(global.fixerId).then(res => {
+      if(res.postId){
+        this.setState({ postId: res.postId._id }, () => {
+          const {postId} = this.state;
+          this.updateUsersLocationDynamically(postId);
+        });
+      }else{
+        addFixersLoc(latitude, longitude, global.fixerId).then(res => {
+          this.setState({postId: res.postId}, () => {
+            const {postId} = this.state;
+            this.updateUsersLocationDynamically(postId);
+          })
+        })
+      }
+    })
+
+  }
+
+  updateUsersLocationDynamically = (postId) => {
+
+    Location.watchPositionAsync(LOCATION_SETTINGS, location => {
+      this.setState({ fixerLocation: location.coords}, () => {
+        const latitude = this.state.fixerLocation.latitude;
+        const longitude = this.state.fixerLocation.longitude;
+        
+        updateFixersLoc(postId, global.fixerId, latitude, longitude).then(res => {
+          console.log(res);  
+        });
+        
+      })
+    });
   }
 
   renderParking = () => {
@@ -147,7 +218,7 @@ class OrderMap extends Component {
         <MapView
           style={styles.map}
         >
-          <Marker coordinate={global.fixerLocation}>
+          <Marker coordinate={this.state.fixerLocation}>
             <View style={styles.myMarker}>
               <View style={styles.myMarkerDot} />
             </View>
@@ -158,7 +229,7 @@ class OrderMap extends Component {
           </Marker>
 
           <MapViewDirections
-            origin={global.fixerLocation}
+            origin={this.state.fixerLocation ? this.state.fixerLocation:global.fixerLocation}
             destination={{latitude: parseFloat(global.userLocLat), longitude: parseFloat(global.userLocLng)}}
             apikey={'AIzaSyAjL_doMA-BBX1S-Lx_BJXrPAjQCFh3UrM'}
             strokeWidth={3}
