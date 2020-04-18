@@ -32,4 +32,23 @@ const getUserProfileRequest = (userId) => {
     });
 }
 
-export {profileRequest, getUserProfileRequest};
+const updateFixerProfileRequest = (fixerId, fName, lName, email, phone) => {
+    return axios({
+    method: 'post',
+    url: 'http://192.168.0.87:8080/auth/updateFixerProfile',
+    data: {
+        fixerId: fixerId,
+        fName: fName,
+        lName: lName,
+        email: email,
+        phone: phone
+    }
+    })
+    .then(response => {
+        return response;
+    }, error => {
+        console.log(error);
+    });
+}
+
+export {profileRequest, getUserProfileRequest, updateFixerProfileRequest};

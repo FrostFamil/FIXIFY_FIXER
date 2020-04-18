@@ -120,6 +120,7 @@ class Register extends Component {
           <Block center style={{ marginTop: 60 }}>
             <Input
               full
+              testID="fname" 
               label="First name"
               style={{ marginBottom: 25 }}
               value={this.state.firstName}
@@ -127,6 +128,7 @@ class Register extends Component {
             />
             <Input
               full
+              testID="lname" 
               label="Last name"
               style={{ marginBottom: 25 }}
               value={this.state.lastName}
@@ -134,6 +136,7 @@ class Register extends Component {
             />
             <Input
               full
+              testID="email" 
               email
               label="Email address"
               style={{ marginBottom: 25 }}
@@ -158,6 +161,7 @@ class Register extends Component {
             </ModalSelector>
             <Input
               full
+              testID="phone" 
               keyboardType='phone-pad'
               label="Mobile number"
               style={{ marginBottom: 25 }}
@@ -166,6 +170,7 @@ class Register extends Component {
             />
             <Input
               full
+              testID="password" 
               password
               label="Password"
               style={{ marginBottom: 25 }}

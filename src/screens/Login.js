@@ -66,19 +66,21 @@ export default class Login extends Component {
             <Block middle>
                 <Input
                 label="Email"
+                testID="email" 
                 placeholder="user@email.com"
                 error={hasErrors("email")}
                 style={[styles.input, hasErrors("email")]}
-                defaultValue={this.state.email}
+                value={this.state.email}
                 onChangeText={text => this.setState({ email: text })}
                 />
                 <Input
                 secure
+                testID="password" 
                 label="Password"
                 placeholder="password"
                 error={hasErrors("password")}
                 style={[styles.input, hasErrors("password")]}
-                defaultValue={this.state.password}
+                value={this.state.password}
                 onChangeText={text => this.setState({ password: text })}
                 />
                 <Button color='#681f51' onPress={() => this.handleLogin()}>

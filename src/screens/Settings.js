@@ -3,7 +3,7 @@ import {View,Text, Image} from "react-native";
 import {Header, Left, Icon, Body, Title, Right} from 'native-base';
 import { CardSection, SettingInput } from '../components';
 import {MaterialIcons} from '@expo/vector-icons';
-import {profileRequest} from '../requests/profileRequest';
+import {profileRequest, updateFixerProfileRequest} from '../requests/profileRequest';
 
 export default class Settings extends Component {
 
@@ -36,6 +36,7 @@ export default class Settings extends Component {
   componentDidMount() {
     this.setState({ fixerId: global.fixerId }, () => {
 
+      const {fixerId} = this.state
       profileRequest(fixerId).then(res => {
         this.setState({
           fName: res.firstName,
@@ -49,6 +50,23 @@ export default class Settings extends Component {
     });
   }
 
+  updateProfile = () => {
+    const { fName, lName, email, phone, fixerId } = this.state;
+
+    updateFixerProfileRequest(fixerId, fName, lName, email, phone).then(() => {
+      profileRequest(fixerId).then(res => {
+        this.setState({
+          fName: res.firstName,
+          lName: res.lastName,
+          email: res.email,
+          phone: res.phone,
+          status: res.status
+        });  
+      });    
+    })
+    
+  }
+
   render() {
     return (
       <View>
@@ -60,7 +78,7 @@ export default class Settings extends Component {
             <Title style={{ color: 'white'}}>Settings</Title>
           </Body>
           <Right style={{ right: 5}}>
-            <Icon  name='ios-checkmark' style={{ color: 'white', fontSize: 42}} />
+            <Icon  name='ios-checkmark' style={{ color: 'white', fontSize: 42}} onPress = {() => this.updateProfile()} />
           </Right>
         </Header>
 
@@ -75,7 +93,9 @@ export default class Settings extends Component {
           <SettingInput
           placeholder="Famil"
           label="First Name:"
+          testID="fname"
           value={this.state.fName}
+          onChangeText={text => this.setState({ fName: text })}
           style={{ height: 40, width: 100 }}
          />
         </CardSection>
@@ -84,7 +104,9 @@ export default class Settings extends Component {
           <SettingInput
           placeholder="Samadli"
           label="Last Name:"
+          testID="lname"
           value={this.state.lName}
+          onChangeText={text => this.setState({ lName: text })}
           style={{ height: 40, width: 100 }}
          />
         </CardSection>
@@ -93,7 +115,9 @@ export default class Settings extends Component {
         <SettingInput
           placeholder="user@gmail.com"
           label="Email:"
+          testID="email"
           value={this.state.email}
+          onChangeText={text => this.setState({ email: text })}
           style={{ height: 40, width: 100 }}
         />
        </CardSection>
@@ -102,7 +126,9 @@ export default class Settings extends Component {
         <SettingInput
            placeholder="+(Country code) 50-465-34-43"
            label="Phone:"
+           testID="phone"
            value={this.state.phone}
+           onChangeText={text => this.setState({ phone: text })}
         />
        </CardSection>
 
