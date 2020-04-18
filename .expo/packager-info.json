@@ -1,10 +1,10 @@
 {
   "expoServerPort": null,
-  "expoServerNgrokUrl": "https://88-i47.fam.fixify-fixer.exp.direct",
-  "packagerNgrokUrl": "https://packager.88-i47.fam.fixify-fixer.exp.direct",
-  "ngrokPid": 5017,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null,
   "devToolsPort": 19002,
   "packagerPort": null,
   "packagerPid": null,
-  "webpackServerPort": 19006
+  "webpackServerPort": null
 }

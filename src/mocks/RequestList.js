@@ -219,7 +219,7 @@ class RequestList extends Component {
                       {item.serviceType}
                     </Text>
                     <Text style={{ fontSize: 12, color: '#A5A5A5', paddingTop: 5 }}>
-                      {item.status}
+                      {item.problem}
                     </Text>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -270,7 +270,7 @@ class RequestList extends Component {
                       {item.serviceType}
                     </Text>
                     <Text style={{ fontSize: 12, color: '#A5A5A5', paddingTop: 5 }}>
-                      {item.status}
+                      {item.problem}
                     </Text>
                 </View>
                 <View style={{ flex: 1, flexDirection: 'row', }}>
@@ -351,7 +351,7 @@ const styles = {
   },
   modal: {
     flexDirection: 'column',
-    height: height * 0.60,
+    height: height * 0.63,
     padding: 12 * 2,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 12,
