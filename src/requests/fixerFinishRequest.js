@@ -6,7 +6,7 @@ import axios from 'axios';
 const fixerAddFinishedRequestToHistory = (acceptor) => {
     return axios({
     method: 'post',
-    url: 'http://localhost:8080/requests/getAllHistoriesOfFixer',
+    url: 'http://192.168.0.87:8080/requests/getAllHistoriesOfFixer',
     data: {
         acceptor: acceptor
     }

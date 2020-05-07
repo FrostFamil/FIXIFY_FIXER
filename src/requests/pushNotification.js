@@ -5,7 +5,7 @@ import axios from 'axios';
 const pushNotification = (token, fName, lName, fixerId, serviceType) => {
     return axios({
     method: 'post',
-    url: 'http://localhost:8080/notification/saveFixersToken',
+    url: 'http://192.168.0.87:8080/notification/saveFixersToken',
     data: {
         token: token,
         fName: fName,

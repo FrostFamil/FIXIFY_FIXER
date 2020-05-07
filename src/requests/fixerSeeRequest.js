@@ -5,7 +5,7 @@ import axios from 'axios';
 const fixerSeeRequest = (requestIndex) => {
     return axios({
     method: 'post',
-    url: 'http://localhost:8080/requests/seeRequest',
+    url: 'http://192.168.0.87:8080/requests/seeRequest',
     data: {
         requestIndex: requestIndex
     }

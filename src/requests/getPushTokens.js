@@ -5,7 +5,7 @@ import axios from 'axios';
 const getPushTokens = (userId) => {
     return axios({
     method: 'post',
-    url: 'http://localhost:8080/notification/getUsersToken',
+    url: 'http://192.168.0.87:8080/notification/getUsersToken',
     data: {
         userId: userId
     }
