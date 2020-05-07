@@ -5,7 +5,7 @@ import axios from 'axios';
 const fixerAcceptRequest = (requestIndex, fixerId) => {
     return axios({
     method: 'post',
-    url: 'http://192.168.0.87:8080/requests/acceptRequest',
+    url: 'http://localhost:8080/requests/acceptRequest',
     data: {
         requestIndex: requestIndex,
         fixerId: fixerId

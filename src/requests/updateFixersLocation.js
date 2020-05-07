@@ -5,7 +5,7 @@ import axios from 'axios';
 const updateFixersLoc = (postId, fixerId, latitude, longitude) => {
     return axios({
     method: 'put',
-    url: 'http://192.168.0.87:8080/fixersLocation/updateFixersLoc',
+    url: 'http://localhost:8080/fixersLocation/updateFixersLoc',
     data: {
         postId: postId,
         fixerId: fixerId,
@@ -25,7 +25,7 @@ const updateFixersLoc = (postId, fixerId, latitude, longitude) => {
 const addFixersLoc = (latitude, longitude, fixerId) => {
     return axios({
     method: 'put',
-    url: 'http://192.168.0.87:8080/fixersLocation/addFixersLoc',
+    url: 'http://localhost:8080/fixersLocation/addFixersLoc',
     data: {
         latitude: latitude,
         longitude: longitude,
@@ -44,7 +44,7 @@ const addFixersLoc = (latitude, longitude, fixerId) => {
 const getFixersPreviousLoc = (fixerId) => {
     return axios({
     method: 'post',
-    url: 'http://192.168.0.87:8080/fixersLocation/getFixersPreviousLoc',
+    url: 'http://localhost:8080/fixersLocation/getFixersPreviousLoc',
     data: {
         fixerId: fixerId
     }

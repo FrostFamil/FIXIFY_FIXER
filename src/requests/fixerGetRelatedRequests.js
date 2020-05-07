@@ -5,7 +5,7 @@ import axios from 'axios';
 const fixerGetRelatedRequests = (serviceType) => {
     return axios({
     method: 'post',
-    url: 'http://192.168.0.87:8080/requests/fixerGetAllRelatedRequest',
+    url: 'http://localhost:8080/requests/fixerGetAllRelatedRequest',
     data: {
         serviceType: serviceType
     }
